@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Environment Variables
+.env
+.env.*
+
+# Node.js
+node_modules/
+.expo/
+dist/
+
+# IDE
+.vscode/
+
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Machine Learning
+*.pkl
+*.joblib
+
+# Logs
+*.log
