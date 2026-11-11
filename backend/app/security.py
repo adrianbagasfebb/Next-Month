@@ -20,9 +20,9 @@ def verify_password(password: str, hashed_password: str) -> bool:
 
 # Membuat Jwt
 def create_access_token(user_id: int) -> str:
-
+    
     if not JWT_SECRET_KEY:
-raise RunTimeError("JWT_SECRET_KEY belum dikonfigurasi")
+        raise RuntimeError("JWT_SECRET_KEY belum dikonfigurasi")
 
     expire = datetime.now(timezone.utc) + timedelta(
 

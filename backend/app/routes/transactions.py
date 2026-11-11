@@ -76,11 +76,11 @@ def update_transaction(
     if transaction is None:
         raise HTTPException(status_code=404, detail="Transaksi tidak ditemukan")
 
-    transaction.type = transaction_data.type
-    transaction.amount = transaction_data.amount
-    transaction.category = transaction_data.category
-    transaction.description = transaction_data.description
-    transaction.transaction_date = transaction_data.transaction_date
+    transaction.type = transaction_update.type
+    transaction.amount = transaction_update.amount
+    transaction.category = transaction_update.category
+    transaction.description = transaction_update.description
+    transaction.transaction_date = transaction_update.transaction_date
 
     db.commit()
     db.refresh(transaction)
@@ -88,23 +88,30 @@ def update_transaction(
     return transaction
 
 # DELETE: Menghapus transaksi
-@router.delete("/{transaction_id}", response_model=TransactionResponse)
+@router.delete("/{transaction_id}")
 def delete_transaction(
     transaction_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user)
 ):
-    transaction = db.query(Transaction)\
-    .filter(Transaction.id == transaction_id, Transaction.user_id == current_user.id)\
+    transaction = (
+        db.query(Transaction)
+        .filter(
+            Transaction.id == transaction_id,
+            Transaction.user_id == current_user.id
+        )
         .first()
+    )
 
     if transaction is None:
-        raise HTTPException(status_code=404, detail="Transaksi tidak ditemukan")
+        raise HTTPException(
+            status_code=404,
+            detail="Transaksi tidak ditemukan"
+        )
 
     db.delete(transaction)
     db.commit()
 
     return {
-        "message": "Transaksi berhasil dihapus",
-        "transaction": transaction
+        "message": "Transaksi berhasil dihapus"
     }
