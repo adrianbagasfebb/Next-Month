@@ -37,3 +37,31 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
 
     # 5 kembalikan data pengguna baru
     return new_user
+
+# Login
+@router.post("/login", response_model=Token)
+def login_user(user: UserLogin, db: Session = Depends(get_db)):
+
+# Cari Pengguna Berdasarkan Email
+existing_user = db.query(User).filter(
+    User.email == User.email
+).first()
+
+# Periksa email dan password 
+if not existing_user or not verify_password(
+    user.password,
+    existing_user.password_hash
+    ):
+raise HTTPException(
+    status_code=401,
+    detail="Email atau password salah"
+    )
+
+# 3. Buat JWT
+access_token= create_access_token(existing_user.id)
+
+# 4. Kembalikan token
+return {
+   "access_token": access_token,
+   "token_type": "bearer"
+   }
