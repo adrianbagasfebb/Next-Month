@@ -1,5 +1,6 @@
 from fastapi import FastAPI 
-from app.routes import transactions, auth, financial_summary
+from app.routes import transactions, auth, financial_summary, budgets
+
 
 app = FastAPI(
     title="NextMonth API",
@@ -10,6 +11,7 @@ app = FastAPI(
 app.include_router(auth.router)
 app.include_router(transactions.router)
 app.include_router(financial_summary.router)
+app.include_router(budgets.router)
 @app.get("/")
 def root():
     return {
