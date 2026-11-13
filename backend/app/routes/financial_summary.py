@@ -8,7 +8,7 @@ from calendar import monthrange
 from app.database import get_db
 from app.models.transaction import Transaction
 from app.models.user import User
-from app.schemas.financial_summary import FinancialSummary, CategoryBreakdownResponse, FinancialTrendResponse
+from app.schemas.financial_summary import FinancialSummary, CategoryBreakdownResponse,  FinancialTrendsResponse
 from app.dependencies import get_current_user
 
 
@@ -151,7 +151,7 @@ def get_category_breakdown(
 # ==========================================
 # 3. FINANCIAL TRENDS
 # ==========================================
-@router.get("/trends",response_model=FinancialTrendResponse
+@router.get("/trends",response_model=FinancialTrendsResponse
 )
 def get_financial_trends(
     period_months: int = Query(default=6, ge=1, le=24),

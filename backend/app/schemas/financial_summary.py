@@ -26,6 +26,6 @@ class MonthlyTrendItem(BaseModel):
     total_expense: Decimal
     balance: Decimal
 
-class FinancialTrendResponse(BaseModel):
-    trend: list[MonthlyTrendItem]
+class FinancialTrendsResponse(BaseModel):
+    trends: list[MonthlyTrendItem]
 
