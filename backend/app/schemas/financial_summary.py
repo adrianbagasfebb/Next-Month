@@ -19,4 +19,13 @@ class CategoryBreakdownResponse(BaseModel):
     total_expense: Decimal
     categories: list[CategoryBreakdownItem]
 
-    
+class MonthlyTrendItem(BaseModel):
+    year: int
+    month: int
+    total_income: Decimal
+    total_expense: Decimal
+    balance: Decimal
+
+class FinancialTrendResponse(BaseModel):
+    trend: list[MonthlyTrendItem]
+
