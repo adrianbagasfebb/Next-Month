@@ -32,3 +32,19 @@ class BudgetResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+    
+class BudgetSummaryItem(BaseModel):
+    category: str
+    budget_amount: Decimal
+    spent_amount: Decimal
+    remaining_amount: Decimal
+    usage_percentage: Decimal
+    status: str
+
+
+class BudgetSummaryResponse(BaseModel):
+    budget_month: date
+    total_budget: Decimal
+    total_spent: Decimal
+    total_remaining: Decimal
+    categories: list[BudgetSummaryItem]
