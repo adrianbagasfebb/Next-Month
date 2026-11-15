@@ -1,5 +1,5 @@
 from fastapi import FastAPI 
-from app.routes import transactions, auth, financial_summary, budgets
+from app.routes import transactions, auth, financial_summary, budgets, debts
 
 
 app = FastAPI(
@@ -12,6 +12,7 @@ app.include_router(auth.router)
 app.include_router(transactions.router)
 app.include_router(financial_summary.router)
 app.include_router(budgets.router)
+app.include_router(debts.router)
 @app.get("/")
 def root():
     return {
