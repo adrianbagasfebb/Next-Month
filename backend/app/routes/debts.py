@@ -434,3 +434,51 @@ def update_debt_payment(
         "remaining_amount": debt.remaining_amount,
         "debt_status": debt.status
     }
+
+@router.delete("/{debt_id}/payments/{payment_id}")
+def delete_debt_payment(
+    debt_id: int,
+    payment_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    debt = db.query(Debt).filter(
+        Debt.id == debt_id,
+        Debt.user_id == current_user.id
+    ).first()
+
+    if debt is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Utang tidak ditemukan"
+        )
+
+    payment = db.query(DebtPayment).filter(
+        DebtPayment.id == payment_id,
+        DebtPayment.debt_id == debt_id,
+        DebtPayment.user_id == current_user.id
+    ).first()
+
+    if payment is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Riwayat pembayaran tidak ditemukan"
+        )
+
+    restored_amount = payment.amount
+
+    debt.remaining_amount += restored_amount
+
+    if debt.remaining_amount > 0:
+        debt.status = "active"
+
+    db.delete(payment)
+    db.commit()
+    db.refresh(debt)
+
+    return {
+        "message": "Riwayat pembayaran berhasil dihapus",
+        "restored_amount": restored_amount,
+        "remaining_amount": debt.remaining_amount,
+        "debt_status": debt.status
+    }
