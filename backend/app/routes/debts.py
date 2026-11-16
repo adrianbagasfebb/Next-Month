@@ -18,7 +18,8 @@ from app.schemas.debt import (
 from app.schemas.debt_payment import (
     DebtPaymentCreate,
     DebtPaymentResponse,
-    DebtPaymentSummaryResponse
+    DebtPaymentSummaryResponse,
+    DebtPaymentUpdate
 )
 from app.dependencies import get_current_user
 
@@ -358,4 +359,78 @@ def get_debt_payment_summary(
         "total_paid": summary.total_paid,
         "payment_count": summary.payment_count,
         "last_payment_date": summary.last_payment_date
+    }
+
+# ==========================================
+# UPDATE DEBT PAYMENT
+# ==========================================
+
+@router.put("/{debt_id}/payments/{payment_id}")
+def update_debt_payment(
+    debt_id: int,
+    payment_id: int,
+    payment_data: DebtPaymentUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    debt = db.query(Debt).filter(
+        Debt.id == debt_id,
+        Debt.user_id == current_user.id
+    ).first()
+
+    if debt is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Utang tidak ditemukan"
+        )
+
+    payment = db.query(DebtPayment).filter(
+        DebtPayment.id == payment_id,
+        DebtPayment.debt_id == debt_id,
+        DebtPayment.user_id == current_user.id
+    ).first()
+
+    if payment is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Riwayat pembayaran tidak ditemukan"
+        )
+
+    update_data = payment_data.model_dump(exclude_unset=True)
+
+    old_amount = payment.amount
+    new_amount = update_data.get("amount", old_amount)
+
+    new_remaining = debt.remaining_amount + old_amount - new_amount
+
+    if new_remaining < 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Pembayaran baru melebihi sisa utang"
+        )
+
+    debt.remaining_amount = new_remaining
+
+    if debt.remaining_amount == 0:
+        debt.status = "paid"
+    else:
+        debt.status = "active"
+
+    for field, value in update_data.items():
+        if value is not None or field == "notes":
+            setattr(payment, field, value)
+
+    try:
+        db.commit()
+        db.refresh(payment)
+        db.refresh(debt)
+    except Exception:
+        db.rollback()
+        raise
+
+    return {
+        "message": "Pembayaran berhasil diperbarui",
+        "payment": payment,
+        "remaining_amount": debt.remaining_amount,
+        "debt_status": debt.status
     }

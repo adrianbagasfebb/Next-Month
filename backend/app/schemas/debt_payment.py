@@ -26,3 +26,8 @@ class DebtPaymentSummaryResponse(BaseModel):
     total_paid: Decimal
     payment_count: int
     last_payment_date: date | None = None
+
+class DebtPaymentUpdate(BaseModel):
+    amount: Decimal | None = Field(default=None, gt=0)
+    payment_date: date | None = None
+    notes: str | None = Field(default=None, max_length=255)
