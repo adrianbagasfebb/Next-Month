@@ -5,6 +5,8 @@ from datetime import date, datetime
 class DebtCreate(BaseModel):
     debt_name: str = Field(min_length=1, max_length=150)
     total_amount: Decimal = Field(gt=0)
+    interest_rate: Decimal = Field(default=Decimal("0"), ge=0, le=999.99)
+    monthly_payment: Decimal = Field(gt=0)
     due_date: date | None = None
 
 class DebtUpdate(BaseModel):
@@ -27,3 +29,11 @@ class DebtResponse(BaseModel):
     created_at: datetime | None = None
 
 model_config = ConfigDict(from_attributes=True)
+
+class DebtSummaryResponse(BaseModel):
+    total_debt: Decimal
+    remaining_debt: Decimal
+    total_monthly_payment: Decimal
+    active_debts: int
+    paid_debts: int
+    overdue_debts: int
