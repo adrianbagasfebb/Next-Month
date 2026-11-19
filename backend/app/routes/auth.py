@@ -38,9 +38,16 @@ def register_user(
         password_hash=hashed_password
     )
 
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    try:
+     db.add(new_user)
+     db.commit()
+     db.refresh(new_user)
+ except Exception:
+     db.rollback()
+     raise HTTPException(
+        status_code=500,
+        detail="Gagal membuat akun"
+    )
 
     return new_user
 
