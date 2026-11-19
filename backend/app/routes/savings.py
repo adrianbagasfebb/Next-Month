@@ -141,7 +141,6 @@ def update_saving_goal(
 # ==========================================
 # 5. CREATE SAVING TRANSACTION
 # ==========================================
-
 @router.post(
     "/{goal_id}/transactions",
     response_model=SavingTransactionResponse
@@ -165,10 +164,11 @@ def create_saving_transaction(
 
     amount = transaction_data.amount
 
-    if goal.status != "active":
+    # Target yang dibatalkan tidak boleh menerima transaksi.
+    if goal.status == "cancelled":
         raise HTTPException(
             status_code=400,
-            detail="Target tabungan tidak dalam status aktif"
+            detail="Target tabungan sudah dibatalkan"
         )
 
     if transaction_data.type == "deposit":
@@ -189,7 +189,8 @@ def create_saving_transaction(
 
         goal.current_amount -= amount
 
-    if goal.current_amount == goal.target_amount:
+    # Perbarui status berdasarkan saldo terbaru.
+    if goal.current_amount >= goal.target_amount:
         goal.status = "completed"
     else:
         goal.status = "active"
@@ -202,12 +203,15 @@ def create_saving_transaction(
         transaction_date=transaction_data.transaction_date
     )
 
-    db.add(new_transaction)
-    db.commit()
-    db.refresh(new_transaction)
+    try:
+        db.add(new_transaction)
+        db.commit()
+        db.refresh(new_transaction)
+    except Exception:
+        db.rollback()
+        raise
 
     return new_transaction
-
 
 # ==========================================
 # 6. GET SAVING TRANSACTION HISTORY
