@@ -51,3 +51,5 @@ class Budget(Base):
         DateTime,
         server_default=func.now(),
     )
+
+    user = relationship("User",          back_populates="budgets")
