@@ -10,7 +10,7 @@ from sqlalchemy import (
     CheckConstraint
 )
 from sqlalchemy.sql import func
-
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 
@@ -48,3 +48,6 @@ class DebtPayment(Base):
         DateTime,
         server_default=func.now()
     )
+
+    debt = relationship("Debt",      back_populates="payments")
+    user = relationship("User")
