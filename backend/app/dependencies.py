@@ -18,7 +18,11 @@ def get_current_user(
 ):
 
     token = credentials.credentials
-
+    if not JWT_SECRET_KEY:
+    raise HTTPException(
+        status_code=500,
+        detail="Konfigurasi JWT belum tersedia"
+    )
     try:
         payload = jwt.decode(
             token,
