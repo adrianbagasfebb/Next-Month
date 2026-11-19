@@ -11,6 +11,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.sql import func
 from app.database import Base
+from sqlalchemy.orm import relationship
 
 class Budget(Base):
     __tablename__ = "budgets"
