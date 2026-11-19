@@ -9,7 +9,7 @@ from sqlalchemy import (
     ForeignKey
 )
 from sqlalchemy.sql import func
-
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 
@@ -38,3 +38,5 @@ class Transaction(Base):
         DateTime,
         server_default=func.now()
     )
+
+user = relationship("User", back_populates="transactions")
