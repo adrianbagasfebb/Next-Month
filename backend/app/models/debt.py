@@ -10,7 +10,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.sql import func
 from app.database import Base
-
+from sqlalchemy.orm import relationship
 
 class Debt(Base):
     __tablename__ = "debts"
@@ -47,3 +47,11 @@ class Debt(Base):
     due_date = Column(Date, nullable=True)
     status = Column(String(20), default="active")
     created_at = Column(DateTime, server_default=func.now())
+
+    user = relationship("User", back_populates="debts")
+
+    payments = relationship(
+    "DebtPayment",
+    back_populates="debt",
+    cascade="all, delete-orphan"
+)
