@@ -6,6 +6,5 @@ psycopg[binary]
 pydantic[email]
 python-dotenv
 PyJWT
-passlib[bcrypt]
-bcrypt
+pwdlib[argon2]
 python-multipart
