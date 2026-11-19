@@ -1,6 +1,6 @@
+
 from fastapi import FastAPI
 from app import models
-from app.routes import savings
 
 from app.routes import (
     transactions,
@@ -8,7 +8,6 @@ from app.routes import (
     financial_summary,
     budgets,
     debts,
-    debt_payment,
     savings,
 )
 
@@ -23,7 +22,6 @@ app.include_router(transactions.router)
 app.include_router(financial_summary.router)
 app.include_router(budgets.router)
 app.include_router(debts.router)
-app.include_router(debt_payment.router)
 app.include_router(savings.router)
 
 
